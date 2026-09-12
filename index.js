@@ -15,6 +15,10 @@ const PREFIX = '?';
 const MEDIA_MANAGER_ROLE_ID = '1537977785753145378';
 const MEDIA_ROLE_ID = '1537977818238165135';
 const STAFF_ROLE_ID = '1537977796184379444';
+const BAN_ROLE_IDS = [
+    '1542347653596061786',
+    '1548460109922046032'
+];
 const MOD_LOG_CHANNEL_ID = '1546195360349814924';
 // 30-minute Media Manager cooldown
 const MEDIA_COOLDOWN = 30 * 60 * 1000;
@@ -116,7 +120,7 @@ const commands = [
     // UNMUTE
     new SlashCommandBuilder()
         .setName('unmute')
-.setDescription("Remove a user's timeout.")
+        .setDescription("Remove a user's timeout.")
         .addUserOption(option =>
             option
                 .setName('user')
@@ -222,6 +226,14 @@ function isStaff(member) {
     return member.roles.cache.has(STAFF_ROLE_ID);
 }
 // ===============================
+// BAN ROLE CHECK
+// ===============================
+function canBan(member) {
+    return BAN_ROLE_IDS.some(roleId =>
+        member.roles.cache.has(roleId)
+    );
+}
+// ===============================
 // TARGET CHECK
 // ===============================
 function canModerate(executor, target) {
@@ -249,7 +261,8 @@ function canModerate(executor, target) {
     ) {
         return {
             allowed: false,
-            message: '❌ You cannot moderate someone with a role equal to or higher than your highest role.'
+            message:
+                '❌ You cannot moderate someone with a role equal to or higher than your highest role.'
         };
     }
     const botMember = target.guild.members.me;
@@ -260,7 +273,8 @@ function canModerate(executor, target) {
     ) {
         return {
             allowed: false,
-            message: '❌ My bot role must be higher than the target user.'
+            message:
+                '❌ My bot role must be higher than the target user.'
         };
     }
     return {
@@ -321,7 +335,9 @@ async function addMedia(member, executor, reply) {
 // ===============================
 async function warnMember(target, executor, reason, reply) {
     if (!isStaff(executor)) {
-        return reply('❌ You need the **Staff** role to use moderation commands.');
+        return reply(
+            '❌ You need the **Staff** role to use moderation commands.'
+        );
     }
     const check = canModerate(executor, target);
     if (!check.allowed) {
@@ -342,7 +358,9 @@ async function warnMember(target, executor, reason, reply) {
 // ===============================
 async function kickMember(target, executor, reason, reply) {
     if (!isStaff(executor)) {
-        return reply('❌ You need the **Staff** role to use moderation commands.');
+        return reply(
+            '❌ You need the **Staff** role to use moderation commands.'
+        );
     }
     const check = canModerate(executor, target);
     if (!check.allowed) {
@@ -370,8 +388,11 @@ async function kickMember(target, executor, reason, reply) {
 // BAN
 // ===============================
 async function banMember(target, executor, reason, reply) {
-    if (!isStaff(executor)) {
-        return reply('❌ You need the **Staff** role to use moderation commands.');
+    // ONLY the two Ban roles can use ban
+    if (!canBan(executor)) {
+        return reply(
+            '❌ You need an authorized **Ban** role to use the ban command.'
+        );
     }
     const check = canModerate(executor, target);
     if (!check.allowed) {
@@ -409,7 +430,9 @@ async function muteMember(
     reply
 ) {
     if (!isStaff(executor)) {
-        return reply('❌ You need the **Staff** role to use moderation commands.');
+        return reply(
+            '❌ You need the **Staff** role to use moderation commands.'
+        );
     }
     const check = canModerate(executor, target);
     if (!check.allowed) {
@@ -445,7 +468,9 @@ async function muteMember(
 // ===============================
 async function unmuteMember(target, executor, reason, reply) {
     if (!isStaff(executor)) {
-        return reply('❌ You need the **Staff** role to use moderation commands.');
+        return reply(
+            '❌ You need the **Staff** role to use moderation commands.'
+        );
     }
     const check = canModerate(executor, target);
     if (!check.allowed) {
