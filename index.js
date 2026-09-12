@@ -116,7 +116,7 @@ const commands = [
     // UNMUTE
     new SlashCommandBuilder()
         .setName('unmute')
-        .setDescription('Remove a user's timeout.')
+.setDescription("Remove a user's timeout.")
         .addUserOption(option =>
             option
                 .setName('user')
