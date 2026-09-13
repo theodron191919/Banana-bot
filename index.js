@@ -8,6 +8,7 @@ const {
     EmbedBuilder,
     ActivityType
 } = require('discord.js');
+const funCommands = require('./commands/fun');
 
 // ==============================
 // CONFIG
@@ -623,9 +624,14 @@ const slashCommands = [
 ];
 
 // Remove duplicate command names
+const allSlashCommands = [
+    ...slashCommands,
+    ...funCommands.map(command => command.data)
+];
+
 const uniqueCommands = [
     ...new Map(
-        slashCommands.map(command => [
+        allSlashCommands.map(command => [
             command.name,
             command
         ])
