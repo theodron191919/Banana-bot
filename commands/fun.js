@@ -1,48 +1,50 @@
-const {
-    SlashCommandBuilder
-} = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 
-const commands = [
+module.exports = [
     {
         data: new SlashCommandBuilder()
             .setName('ship')
-            .setDescription('See how compatible two people are.')
+            .setDescription('Ship two users together')
             .addUserOption(option =>
-                option.setName('user1')
-                    .setDescription('First person')
-                    .setRequired(true))
+                option
+                    .setName('user1')
+                    .setDescription('First user')
+                    .setRequired(true)
+            )
             .addUserOption(option =>
-                option.setName('user2')
-                    .setDescription('Second person')
-                    .setRequired(true)),
+                option
+                    .setName('user2')
+                    .setDescription('Second user')
+                    .setRequired(true)
+            ),
 
-        execute: async interaction => {
+        async execute(interaction) {
             const user1 = interaction.options.getUser('user1');
             const user2 = interaction.options.getUser('user2');
-
             const percentage = Math.floor(Math.random() * 101);
 
+            let result;
+
+            if (percentage <= 10) {
+                result = '💀 Absolutely cooked.';
+            } else if (percentage <= 25) {
+                result = '😭 This is NOT looking good.';
+            } else if (percentage <= 45) {
+                result = '💔 There might be something there... maybe.';
+            } else if (percentage <= 65) {
+                result = '👀 Okay, there could be potential.';
+            } else if (percentage <= 80) {
+                result = '🔥 Pretty solid match.';
+            } else if (percentage <= 95) {
+                result = '💘 This is actually looking good.';
+            } else {
+                result = '❤️‍🔥 BRO. IT WAS MEANT TO BE.';
+            }
+
             await interaction.reply(
-                `💘 **${user1.username} + ${user2.username}** = **${percentage}%** compatibility!`
-            );
-        }
-    },
-
-    {
-        data: new SlashCommandBuilder()
-            .setName('rizz')
-            .setDescription('Check someone's rizz.')
-            .addUserOption(option =>
-                option.setName('user')
-                    .setDescription('Person to rate')
-                    .setRequired(false)),
-
-        execute: async interaction => {
-            const user = interaction.options.getUser('user') || interaction.user;
-            const score = Math.floor(Math.random() * 101);
-
-            await interaction.reply(
-                `😎 **${user.username}'s rizz:** **${score}/100**`
+                `💘 **${user1.username} + ${user2.username}**\n\n` +
+                `**Compatibility:** ${percentage}%\n` +
+                `${result}`
             );
         }
     },
@@ -50,16 +52,41 @@ const commands = [
     {
         data: new SlashCommandBuilder()
             .setName('luck')
-            .setDescription('Check your luck.'),
+            .setDescription('See how lucky you are'),
 
-        execute: async interaction => {
-            const luck = Math.floor(Math.random() * 101);
+        async execute(interaction) {
+            const percentage = Math.floor(Math.random() * 101);
 
             await interaction.reply(
-                `🍀 **${interaction.user.username}'s luck today:** **${luck}%**`
+                `🍀 Your luck today is **${percentage}%**!`
+            );
+        }
+    },
+
+    {
+        data: new SlashCommandBuilder()
+            .setName('mog')
+            .setDescription('Get a random mog tier'),
+
+        async execute(interaction) {
+            const tiers = [
+                'Low Tier Normie',
+                'Mid Tier Normie',
+                'High Tier Normie',
+                'Chad Lite',
+                'Chad',
+                'True Adam',
+                'Sub 3'
+            ];
+
+            const tier = tiers[Math.floor(Math.random() * tiers.length)];
+            const score = Math.floor(Math.random() * 101);
+
+            await interaction.reply(
+                `🗿 **MOG RESULT**\n\n` +
+                `**Mog Level:** ${score}/100\n` +
+                `**Tier:** ${tier}`
             );
         }
     }
 ];
-
-module.exports = commands;
