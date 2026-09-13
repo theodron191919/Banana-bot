@@ -3338,6 +3338,13 @@ client.on(
         }
 
         try {
+            const funCommand = funCommands.find(
+    command => command.data.name === interaction.commandName
+);
+
+if (funCommand) {
+    return funCommand.execute(interaction);
+}
             switch (interaction.commandName) {
 
                 case 'addmedia':
